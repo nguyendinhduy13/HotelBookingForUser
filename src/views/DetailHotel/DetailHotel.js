@@ -1,11 +1,11 @@
 import slugify from '@sindresorhus/slugify';
-import React, {useEffect, useRef, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import Lottie from 'lottie-react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Animated,
   Dimensions,
-  Image, 
+  Image,
   PanResponder,
   Platform,
   Pressable,
@@ -16,17 +16,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Calendar} from 'react-native-calendars';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {useTheme} from 'react-native-paper';
+import { Calendar } from 'react-native-calendars';
+import { useTheme } from 'react-native-paper';
 import Icon5 from 'react-native-vector-icons/AntDesign';
 import Icon4 from 'react-native-vector-icons/FontAwesome5';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useDispatch, useSelector} from 'react-redux';
-import {GetHotelByID} from './apidetailhotel';
-import {setBookingDate} from '../../../redux/Globalreducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBookingDate } from '../../../redux/Globalreducer';
 import { saveIdHotel } from '../../../redux/VehicleReducer';
+import { GetHotelByID } from './apidetailhotel';
 
 const width = Dimensions.get('screen').width;
 const WINDOW_HEIGHT = Dimensions.get('screen').height;
@@ -401,66 +400,6 @@ const DetailHotel = ({navigation, route}) => {
                           {t('viewmap')}
                         </Text>
                       </TouchableOpacity>
-              {/* <View
-            style={{
-              marginTop: 10,
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                  color: colors.text,
-                }}>
-                {t('map')}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('Map', hotelData);
-                }}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 'bold',
-                    color: colors.primary,
-                    marginRight: 5,
-                  }}>
-                  {t('viewmap')}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                width: '99%',
-                height: 150,
-                marginTop: 10,
-              }}>
-              <MapView
-                ref={mapRef}
-                zoomEnabled={false}
-                scrollEnabled={false}
-                style={{flex: 1}}
-                provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-                region={{
-                  latitude: Number(hotelData.position[0]),
-                  longitude: Number(hotelData.position[1]),
-                  latitudeDelta: LATITUDE_DELTA,
-                  longitudeDelta: LONGITUDE_DELTA,
-                }}>
-                <Marker
-                  coordinate={{
-                    latitude: Number(hotelData?.position[0]),
-                    longitude: Number(hotelData?.position[1]),
-                  }}
-                />
-              </MapView>
-            </View>
-          </View> */}
               <Text
                 style={{
                   fontSize: 20,
