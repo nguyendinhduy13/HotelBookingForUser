@@ -400,6 +400,66 @@ const DetailHotel = ({navigation, route}) => {
                           {t('viewmap')}
                         </Text>
                       </TouchableOpacity>
+              {/* <View
+            style={{
+              marginTop: 10,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: colors.text,
+                }}>
+                {t('map')}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Map', hotelData);
+                }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 'bold',
+                    color: colors.primary,
+                    marginRight: 5,
+                  }}>
+                  {t('viewmap')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                width: '99%',
+                height: 150,
+                marginTop: 10,
+              }}>
+              <MapView
+                ref={mapRef}
+                zoomEnabled={false}
+                scrollEnabled={false}
+                style={{flex: 1}}
+                provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                region={{
+                  latitude: Number(hotelData.position[0]),
+                  longitude: Number(hotelData.position[1]),
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                }}>
+                <Marker
+                  coordinate={{
+                    latitude: Number(hotelData?.position[0]),
+                    longitude: Number(hotelData?.position[1]),
+                  }}
+                />
+              </MapView>
+            </View>
+          </View> */}
               <Text
                 style={{
                   fontSize: 20,
