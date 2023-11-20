@@ -5,7 +5,12 @@ import { useSelector } from 'react-redux';
 const Notification = () => {
   const {notification} = useSelector(state => state.global);
 
-  
+  const formatLongText = text => {
+    if (text?.length > 110) {
+      return text.slice(0, 110) + '...';
+    }
+    return text;
+  };
 
   return (
     <View
