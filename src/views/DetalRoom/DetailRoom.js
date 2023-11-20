@@ -1,7 +1,9 @@
+import slugify from '@sindresorhus/slugify';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Animated,
+    Image,
     ImageBackground,
     ScrollView,
     StyleSheet,
@@ -12,6 +14,7 @@ import {
 import { useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
+import Icons from '../../assets/icons/icons';
 export default function DetailRoom({ navigation, route }) {
     const { t } = useTranslation();
     const { colors } = useTheme();
@@ -240,6 +243,56 @@ export default function DetailRoom({ navigation, route }) {
                                 </View>
                             </View>
                         </View>
+                        <View style={{ paddingTop: '4%' }}>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                }}>
+                                <Text
+                                    style={{
+                                        fontSize: 18,
+                                        color: colors.text,
+                                        fontWeight: 'bold',
+                                    }}>
+                                    {t('gallery-photos')}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() =>
+                                        navigation.navigate(
+                                            'ImageRoom',
+                                            dataRoom,
+                                        )
+                                    }>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: 'bold',
+                                            color: colors.primary,
+                                        }}>
+                                        {t('show')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ paddingTop: '5%' }}>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}>
+                                    {dataRoom.image.map((item, index) => (
+                                        <Image
+                                            key={index}
+                                            source={{ uri: item }}
+                                            style={{
+                                                width: 165,
+                                                height: 150,
+                                                borderRadius: 10,
+                                                marginRight: 10,
+                                            }}
+                                        />
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        </View>
                         <View style={{ paddingTop: '2%' }}>
                             <View>
                                 <Text
@@ -279,6 +332,35 @@ export default function DetailRoom({ navigation, route }) {
                                     'different-utilities-depending-on-the-type-of-room',
                                 )}
                             </Text>
+                            <View style={{ marginTop: 5 }}>
+                                {DataDetail.map((item, index) => (
+                                    <View
+                                        key={index}
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            paddingVertical: 5,
+                                        }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 15,
+                                                color: colors.text,
+                                            }}>
+                                            {item.split(' ')[1] === 'm²'
+                                                ? item + ' '
+                                                : t(`${slugify(item)}`)}
+                                        </Text>
+                                        <Image
+                                            source={Icons(slugify(item))}
+                                            style={{
+                                                width: 22,
+                                                height: 22,
+                                                tintColor: colors.text,
+                                            }}
+                                        />
+                                    </View>
+                                ))}
+                            </View>
                         </View>
                     </View>
                 </View>
