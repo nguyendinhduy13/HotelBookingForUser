@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-    View,
+    Dimensions,
+    Image,
+    Modal,
     ScrollView,
     Text,
     TouchableOpacity,
-    Image,
-    Dimensions,
-    Modal,
+    View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import IconMark from 'react-native-vector-icons/FontAwesome';
-import { useTheme } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import { saveInfoVehicle } from '../../../redux/VehicleReducer';
 import { Calendar } from 'react-native-calendars';
+import { useTheme } from 'react-native-paper';
+import IconMark from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useDispatch, useSelector } from 'react-redux';
+import { saveInfoVehicle } from '../../../redux/VehicleReducer';
 
 const width = Dimensions.get('window').width;
 const DetailVehicle = ({ navigation, route }) => {

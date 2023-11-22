@@ -1,11 +1,11 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import CustomHeader from '../../components/CustomHeader';
-import {useTheme} from 'react-native-paper';
-import {useTranslation} from 'react-i18next';
-import {useDispatch, useSelector} from 'react-redux';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import { useTheme } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPaymentMethod } from '../../../redux/VehicleReducer';
+import CustomHeader from '../../components/CustomHeader';
 const PaymentMethod = ({navigation}) => {
   const {colors} = useTheme();
   const {t} = useTranslation();
