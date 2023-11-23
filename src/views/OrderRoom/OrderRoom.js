@@ -1,27 +1,26 @@
+import CryptoJS from 'crypto-js';
+import Lottie from 'lottie-react-native';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
+  Dimensions,
+  Image,
+  ImageBackground,
+  NativeModules,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
-  Image,
-  Dimensions,
-  ImageBackground,
-  ToastAndroid,
   TouchableOpacity,
-  NativeModules,
+  View
 } from 'react-native';
-import React from 'react';
-import CustomHeader from '../../components/CustomHeader';
-import {useTheme} from 'react-native-paper';
-import Lottie from 'lottie-react-native';
-import {useSelector, useDispatch} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-const {width} = Dimensions.get('window');
+import { useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {AddNewOrder} from '../../../middlewares/orders';
-import {addOrder} from '../../../redux/Globalreducer';
-import CryptoJS from 'crypto-js';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddNewOrder } from '../../../middlewares/orders';
+import { addOrder } from '../../../redux/Globalreducer';
 import { clearInfoVehicle } from '../../../redux/VehicleReducer';
+import CustomHeader from '../../components/CustomHeader';
+const {width} = Dimensions.get('window');
 const OrderRoom = ({navigation, route}) => {
   const dataRoom = route.params.room;
   const dataHotel = route.params.hotel;
