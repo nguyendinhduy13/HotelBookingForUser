@@ -84,6 +84,38 @@ const Chat = ({ navigation, route }) => {
         await SendMessage(data);
     };
 
+    //don't use
+    const handleSendMsgTest = async Msg => {
+        const msg = Msg.trim();
+        socket.current.emit('send-msg', {
+            to: hotelData._id,
+            from: currentUser._id,
+            msg,
+        });
+        const msgs = [...messages];
+        msgs.push({
+            fromSelf: true,
+            message: {
+                text: msg,
+            },
+        });
+        setMessages(msgs);
+        setInput('');
+
+        const data = {
+            from: currentUser._id,
+            fromType: 'user',
+            to: hotelData._id,
+            toType:
+                hotelData._id === '6442aa5167b30af877e4ee71'
+                    ? 'admin'
+                    : 'hotel',
+            message: msg,
+        };
+
+        await SendMessage(data);
+    };
+
     useEffect(() => {
         if (socket.current) {
             socket.current.on('msg-receive', data => {
