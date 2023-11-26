@@ -32,16 +32,6 @@ export default function Booking() {
     const [loading, setloading] = useState(false);
     const [dataBooking, setdataBooking] = useState([]);
 
-    useEffect(() => {
-        setloading(true);
-        GetOrders(userData._id).then(res => {
-            if (res.status === 200) {
-                setdataBooking(res.data.data);
-            }
-            setloading(false);
-        });
-    }, [userData]);
-
     const Format = prices => {
         return prices.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     };
@@ -97,147 +87,19 @@ export default function Booking() {
         });
     };
 
-    const CardBooking = ({ item, index }) => {
-        return (
-            <TouchableOpacity
-                key={index}
-                onPress={() => {
-                    navigation.navigate('DetailBooking', {
-                        id_booking: item._id,
-                        id_hotel: item.id_hotel,
-                    });
-                }}
-                style={{
-                    backgroundColor: colors.box,
-                    borderRadius: 15,
-                    marginTop: 10,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                        width: 0,
-                        height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-                    elevation: 5,
-                    width: '93%',
-                    alignSelf: 'center',
-                }}>
-                <View style={{ flexDirection: 'row', padding: 10 }}>
-                    <Image
-                        source={{ uri: filterHotel(item.id_hotel).image[0] }}
-                        style={{ width: 100, height: 100, borderRadius: 10 }}
-                    />
-                    <View style={{ marginLeft: 10, width: '100%' }}>
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                color: colors.text,
-                                fontWeight: 'bold',
-                            }}>
-                            {filterHotel(item.id_hotel).name}
-                        </Text>
-                        <Text
-                            style={{
-                                marginTop: 5,
-                                width: 220,
-                                fontSize: 15,
-                                color: colors.icon,
-                            }}>
-                            {FormatName(item.id_room.name)}
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                marginTop: 'auto',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                width: 230,
-                            }}>
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontWeight: '700',
-                                    color: colors.text,
-                                }}>
-                                {Format(item.total)}{' '}
-                                <Text style={{ fontSize: 13 }}>VNĐ</Text>
-                            </Text>
-                            <View
-                                style={{
-                                    padding: 5,
-                                    borderRadius: 10,
-                                    borderWidth: 1,
-                                    borderColor: colors.primary,
-                                }}>
-                                <Text
-                                    style={{
-                                        fontSize: 13,
-                                        color: colors.primary,
-                                    }}>
-                                    {filterStatus(item)}
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        paddingHorizontal: 10,
-                        paddingBottom: 10,
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}>
-                    <View>
-                        <Text style={{ fontSize: 13, color: colors.icon }}>
-                            {t('check-in')}:{' '}
-                            <Text
-                                style={{
-                                    fontWeight: 'bold',
-                                    color: colors.text,
-                                }}>
-                                {FormatDayMonthYear(item.check_in)}
-                            </Text>
-                        </Text>
-                        <Text style={{ fontSize: 13, color: colors.icon }}>
-                            {t('check-out')}:{' '}
-                            <Text
-                                style={{
-                                    fontWeight: 'bold',
-                                    color: colors.text,
-                                }}>
-                                {FormatDayMonthYear(item.check_out)}
-                            </Text>
-                        </Text>
-                    </View>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                        }}>
-                        <TouchableOpacity
-                            style={{
-                                backgroundColor: colors.primary,
-                                padding: 10,
-                                borderRadius: 10,
-                                width: 90,
-                            }}
-                            onPress={() => {
-                                setModalVisible(true);
-                                setidroom(item._id);
-                            }}>
-                            <Text
-                                style={{ color: 'white', textAlign: 'center' }}>
-                                {t('cancel')}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        );
+    const getDataBooking = () => {
+        setloading(true);
+        GetOrders(userData._id).then(res => {
+            if (res.status === 200) {
+                setdataBooking(res.data);
+            }
+            setloading(false);
+        });
     };
+
+    useEffect(() => {
+        getDataBooking();
+    }, []);
 
     const CardCompleted = ({ item, index }) => {
         return (

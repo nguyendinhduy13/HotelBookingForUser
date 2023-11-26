@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
-import {Text, View, LogBox, PermissionsAndroid} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Lottie from 'lottie-react-native';
-import RootNavigation from './src/navigation/root';
+import React, { useEffect, useState } from 'react';
+import { LogBox, PermissionsAndroid, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import {
-  setAsyncStorage,
   getAsyncStorage,
+  setAsyncStorage,
 } from './functions/asyncStorageFunctions';
-import {CheckLogin} from './middlewares/auth';
-import {GetAllHotels} from './middlewares/hotels';
-import {useDispatch, useSelector} from 'react-redux';
+import { CheckLogin } from './middlewares/auth';
+import { GetAllHotels } from './middlewares/hotels';
 import {
-  setUserData,
   setHotels,
-  setUserPosition,
   setTheme,
+  setUserData,
+  setUserPosition,
 } from './redux/Globalreducer';
 import i18n from './src/i18n/18n';
+import RootNavigation from './src/navigation/root';
 import {
-  requestUserPermission,
   NotificationService,
+  requestUserPermission,
 } from './src/utils/PushNotification';
-import {useNavigation} from '@react-navigation/native';
 
 //logbox ignore all
 LogBox.ignoreAllLogs();
@@ -55,7 +55,7 @@ const App = () => {
       if (res.status === 200) {
         console.log('Data hotels geted');
         res.data = res.data.filter(
-          (item: {isactive: boolean}) => item.isactive === true,
+          (item: { isactive: boolean }) => item.isactive === true,
         );
         dispatch(setHotels(res.data));
         setWait(false);
@@ -109,7 +109,7 @@ const App = () => {
           }),
         );
       },
-      {enableHighAccuracy: true},
+      { enableHighAccuracy: true },
     );
   };
   const requestLocation = async () => {
@@ -139,10 +139,10 @@ const App = () => {
   }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       {wait ? (
         <View
-          style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
+          style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}>
           <Lottie
             source={require('./src/assets/animations/140846-vertical-animation.json')}
             autoPlay
