@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
-export default function Header({ name }) {
+export default function HeaderTest({ name }) {
     const { colors } = useTheme();
     return (
         <View

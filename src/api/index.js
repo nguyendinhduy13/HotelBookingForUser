@@ -1,2 +1,1 @@
-
-export const LOCAL_API_URL ='http://172.19.0.2:6996'
+export const LOCAL_API_URL = 'http://192.168.1.5:6996';
