@@ -13,8 +13,8 @@ import { useTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
-import { LOCAL_API_URL } from '../../api';
 import { RecieveMessage, SendMessage } from '../../../middlewares/chat';
+import { LOCAL_API_URL } from '../../api';
 import CustomHeader from '../CustomHeader';
 import MsgComponent from './MsgComponent';
 
@@ -84,6 +84,38 @@ const Chat = ({ navigation, route }) => {
         await SendMessage(data);
     };
 
+    //don't use
+    const handleSendMsgTest = async Msg => {
+        const msg = Msg.trim();
+        socket.current.emit('send-msg', {
+            to: hotelData._id,
+            from: currentUser._id,
+            msg,
+        });
+        const msgs = [...messages];
+        msgs.push({
+            fromSelf: true,
+            message: {
+                text: msg,
+            },
+        });
+        setMessages(msgs);
+        setInput('');
+
+        const data = {
+            from: currentUser._id,
+            fromType: 'user',
+            to: hotelData._id,
+            toType:
+                hotelData._id === '6442aa5167b30af877e4ee71'
+                    ? 'admin'
+                    : 'hotel',
+            message: msg,
+        };
+
+        await SendMessage(data);
+    };
+
     useEffect(() => {
         if (socket.current) {
             socket.current.on('msg-receive', data => {
@@ -121,6 +153,17 @@ const Chat = ({ navigation, route }) => {
     const listViewHeight = useRef(0);
 
     const checkTime = (time, index) => {
+        if (index === 0) {
+            return true;
+        }
+        const prevTime = new Date(messages[index - 1].time);
+        const currentTime = new Date(time);
+        const diff = currentTime - prevTime;
+        return diff > 1800000 ? true : false;
+    };
+
+    //don't use
+    const checkTimeTest = (time, index) => {
         if (index === 0) {
             return true;
         }
