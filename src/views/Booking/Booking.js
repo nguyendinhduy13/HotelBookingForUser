@@ -40,7 +40,7 @@ export default function Booking() {
             }
             setloading(false);
         });
-    }, [userData]);
+    }, [userData, button]);
 
     const Format = prices => {
         return prices.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
