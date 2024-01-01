@@ -1,3 +1,4 @@
+import Slider from '@react-native-community/slider';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,6 +21,7 @@ import { useTheme } from 'react-native-paper';
 import Swiper from 'react-native-swiper';
 import Icon3 from 'react-native-vector-icons/AntDesign';
 import Icon5 from 'react-native-vector-icons/EvilIcons';
+import FilterIcon from 'react-native-vector-icons/Feather';
 import Icon4 from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,9 +40,10 @@ export default function HomeScreen({ navigation }) {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { hotels, userData } = useSelector(state => state.global);
-    const ranHotel = [1, 2, 4];
 
-    console.log('hotels', hotels);
+    const [pricefor1night, setPricefor1night] = useState(0);
+
+    const ranHotel = [1, 2, 4];
 
     const image_default =
         'https://img1.ak.crunchyroll.com/i/spire3/d23bea1cbe84833135f94695d900f0651651339079_main.png';
@@ -68,6 +71,8 @@ export default function HomeScreen({ navigation }) {
     const [activeCardIndex, setActiveCardIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [filterVisible, setFilterVisible] = useState(false);
 
     const animatedValue = useRef(new Animated.Value(0)).current;
     const SearchShow = {
@@ -109,7 +114,42 @@ export default function HomeScreen({ navigation }) {
         }
     };
 
+    const handleFilter = () => {
+        let newData = hotels;
+        if (pricefor1night !== 0) {
+            newData = newData.filter(item => {
+                return item.rooms[0].price <= pricefor1night;
+            });
+        }
+        if (rateHotel !== 0) {
+            newData = newData.filter(item => {
+                return (
+                    TotalStar(item.comments).star >= rateHotel &&
+                    TotalStar(item.comments).star < rateHotel + 1
+                );
+            });
+        }
+        if (sortStyle === 'LowToHigh') {
+            newData.sort((a, b) => {
+                return a.rooms[0].price - b.rooms[0].price;
+            });
+        } else if (sortStyle === 'HighToLow') {
+            newData.sort((a, b) => {
+                return b.rooms[0].price - a.rooms[0].price;
+            });
+        }
+        console.log('newData', newData);
+        setData(newData);
+        setFilterVisible(false);
+        setModalVisible(true);
+    };
+
     const [historySearch, setHistorySearch] = useState([]);
+
+    const [sortStyle, setSortStyle] = useState('default');
+
+    const [rateHotel, setRateHotel] = useState(0);
+
     const readItemFromStorage = async () => {
         const value = await getAsyncStorage('historyHotel');
         if (value !== null) {
@@ -720,31 +760,60 @@ export default function HomeScreen({ navigation }) {
                                 <View
                                     style={[
                                         styles.searchInputContainer1,
-                                        { backgroundColor: colors.bg },
+                                        {
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            backgroundColor: colors.bg,
+                                        },
                                     ]}>
-                                    <Icon5
-                                        name="search"
-                                        size={30}
+                                    <View
                                         style={{
-                                            marginLeft: 10,
-                                        }}
-                                        color="#FF6347"
-                                    />
-                                    <TextInput
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                        }}>
+                                        <Icon5
+                                            name="search"
+                                            size={30}
+                                            style={{
+                                                marginLeft: 10,
+                                            }}
+                                            color="#FF6347"
+                                        />
+                                        <TextInput
+                                            style={{
+                                                fontSize: 17,
+                                                paddingLeft: 10,
+                                            }}
+                                            placeholder={t('search')}
+                                            placeholderTextColor={colors.icon}
+                                            autoFocus={true}
+                                            ref={textInput}
+                                            value={search}
+                                            onChangeText={text => {
+                                                handleSearch(text);
+                                            }}
+                                            color={colors.text}
+                                        />
+                                    </View>
+                                    <TouchableOpacity
                                         style={{
-                                            fontSize: 17,
-                                            paddingLeft: 10,
+                                            marginRight: 10,
+                                            height: 40,
+                                            width: 40,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
                                         }}
-                                        placeholder={t('search')}
-                                        placeholderTextColor={colors.icon}
-                                        autoFocus={true}
-                                        ref={textInput}
-                                        value={search}
-                                        onChangeText={text => {
-                                            handleSearch(text);
-                                        }}
-                                        color={colors.text}
-                                    />
+                                        onPress={() => {
+                                            setFilterVisible(true);
+                                            setModalVisible(false);
+                                        }}>
+                                        <FilterIcon
+                                            name="filter"
+                                            size={24}
+                                            color="#FF6347"
+                                            style={{}}
+                                        />
+                                    </TouchableOpacity>
                                 </View>
                             </View>
 
@@ -920,6 +989,447 @@ export default function HomeScreen({ navigation }) {
                         </View>
                     </Pressable>
                 </View>
+            </Modal>
+            <Modal visible={filterVisible}>
+                <TouchableOpacity
+                    activeOpacity={1}
+                    style={{
+                        flex: 1,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                    }}>
+                    <View
+                        style={{
+                            backgroundColor: 'white',
+                            height: '70%',
+                            width: '100%',
+                            position: 'absolute',
+                            bottom: 0,
+                            borderTopLeftRadius: 20,
+                            borderTopRightRadius: 20,
+                            padding: 20,
+                        }}>
+                        <View>
+                            <Text
+                                style={{
+                                    fontSize: 26,
+                                    textAlign: 'center',
+                                    fontWeight: '700',
+                                    color: 'black',
+                                }}>
+                                Bộ Lọc
+                            </Text>
+                            <View
+                                style={{
+                                    height: 1,
+                                    marginVertical: 20,
+                                    backgroundColor: '#dddddd',
+                                }}
+                            />
+                        </View>
+                        <View>
+                            <Text
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: '700',
+                                    color: 'black',
+                                }}>
+                                Theo giá
+                            </Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    marginVertical: 20,
+                                }}>
+                                <TouchableOpacity
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: 20,
+                                        height: 40,
+                                        width: 120,
+                                        borderRadius: 10,
+                                        borderWidth: 2,
+                                        borderColor:
+                                            sortStyle === 'LowToHigh'
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        backgroundColor:
+                                            sortStyle === 'LowToHigh'
+                                                ? '#52c0b4'
+                                                : 'white',
+                                    }}
+                                    onPress={() => {
+                                        setSortStyle('LowToHigh');
+                                    }}>
+                                    <Text
+                                        style={{
+                                            color:
+                                                sortStyle === 'LowToHigh'
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        Thấp đến cao
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: 20,
+                                        height: 40,
+                                        width: 120,
+                                        borderRadius: 10,
+                                        borderWidth: 2,
+                                        borderColor:
+                                            sortStyle === 'HighToLow'
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        backgroundColor:
+                                            sortStyle === 'HighToLow'
+                                                ? '#52c0b4'
+                                                : 'white',
+                                    }}
+                                    onPress={() => {
+                                        setSortStyle('HighToLow');
+                                    }}>
+                                    <Text
+                                        style={{
+                                            color:
+                                                sortStyle === 'HighToLow'
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        Cao đến thấp
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Text
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: '700',
+                                    color: 'black',
+                                }}>
+                                Mức giá cho phòng 1 đêm
+                            </Text>
+                            <View>
+                                <Text
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: '700',
+                                        color: 'black',
+                                        marginVertical: 10,
+                                    }}>
+                                    0 - {pricefor1night} VNĐ
+                                </Text>
+                            </View>
+                            <Slider
+                                style={{ width: 300, height: 40 }}
+                                step={1000}
+                                onValueChange={setPricefor1night}
+                                minimumValue={0}
+                                maximumValue={2000000}
+                                thumbTintColor="#52c0b4"
+                                minimumTrackTintColor="#52c0b4"
+                                maximumTrackTintColor="#000000"
+                            />
+                            <Text
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: '700',
+                                    color: 'black',
+                                }}>
+                                Đánh giá
+                            </Text>
+                            <View
+                                style={{
+                                    marginVertical: 20,
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                }}>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor:
+                                            rateHotel === 1
+                                                ? '#52c0b4'
+                                                : 'white',
+                                        borderWidth: 2,
+                                        borderColor:
+                                            rateHotel === 1
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        height: 35,
+                                        width: 60,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setRateHotel(1);
+                                    }}>
+                                    <Icon
+                                        name="star"
+                                        size={15}
+                                        color={
+                                            rateHotel === 1
+                                                ? 'white'
+                                                : '#52c0b4'
+                                        }
+                                        style={{
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                rateHotel === 1
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        1
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor:
+                                            rateHotel === 2
+                                                ? '#52c0b4'
+                                                : 'white',
+                                        borderWidth: 2,
+                                        borderColor:
+                                            rateHotel === 2
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        height: 35,
+                                        width: 60,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setRateHotel(2);
+                                    }}>
+                                    <Icon
+                                        name="star"
+                                        size={15}
+                                        color={
+                                            rateHotel === 2
+                                                ? 'white'
+                                                : '#52c0b4'
+                                        }
+                                        style={{
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                rateHotel === 2
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        2
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor:
+                                            rateHotel === 3
+                                                ? '#52c0b4'
+                                                : 'white',
+                                        borderWidth: 2,
+                                        borderColor:
+                                            rateHotel === 3
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        height: 35,
+                                        width: 60,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setRateHotel(3);
+                                    }}>
+                                    <Icon
+                                        name="star"
+                                        size={15}
+                                        color={
+                                            rateHotel === 3
+                                                ? 'white'
+                                                : '#52c0b4'
+                                        }
+                                        style={{
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                rateHotel === 3
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        3
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor:
+                                            rateHotel === 4
+                                                ? '#52c0b4'
+                                                : 'white',
+                                        borderWidth: 2,
+                                        borderColor:
+                                            rateHotel === 4
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        height: 35,
+                                        width: 60,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setRateHotel(4);
+                                    }}>
+                                    <Icon
+                                        name="star"
+                                        size={15}
+                                        color={
+                                            rateHotel === 4
+                                                ? 'white'
+                                                : '#52c0b4'
+                                        }
+                                        style={{
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                rateHotel === 4
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        4
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor:
+                                            rateHotel === 5
+                                                ? '#52c0b4'
+                                                : 'white',
+                                        borderWidth: 2,
+                                        borderColor:
+                                            rateHotel === 5
+                                                ? 'transparent'
+                                                : '#52c0b4',
+                                        height: 35,
+                                        width: 60,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setRateHotel(5);
+                                    }}>
+                                    <Icon
+                                        name="star"
+                                        size={15}
+                                        color={
+                                            rateHotel === 5
+                                                ? 'white'
+                                                : '#52c0b4'
+                                        }
+                                        style={{
+                                            marginRight: 5,
+                                        }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                rateHotel === 5
+                                                    ? 'white'
+                                                    : '#52c0b4',
+                                            fontWeight: '700',
+                                        }}>
+                                        5
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginTop: 50,
+                                }}>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: '#52c0b4',
+                                        height: 45,
+                                        width: 150,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        setFilterVisible(false);
+                                        setModalVisible(true);
+                                        setRateHotel(0);
+                                        setPricefor1night(0);
+                                        setSortStyle('default');
+                                    }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                            color: 'white',
+                                            fontWeight: '700',
+                                        }}>
+                                        Hủy
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{
+                                        backgroundColor: '#52c0b4',
+                                        height: 45,
+                                        width: 150,
+                                        borderRadius: 15,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    onPress={() => {
+                                        handleFilter();
+                                    }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                            color: 'white',
+                                            fontWeight: '700',
+                                        }}>
+                                        Áp dụng
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
             </Modal>
         </SafeAreaView>
     );
