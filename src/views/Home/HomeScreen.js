@@ -429,9 +429,9 @@ export default function HomeScreen({ navigation }) {
                 </TouchableOpacity>
                 <View>
                     <Pressable
-                        onPress={() => {
-                            navigation.navigate('ListPlace');
-                        }}
+                        // onPress={() => {
+                        //     navigation.navigate('ListPlace');
+                        // }}
                         style={{
                             marginTop: 10,
                             paddingHorizontal: 20,
